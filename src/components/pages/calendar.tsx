@@ -2,8 +2,20 @@ import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useState } from 'react';
 
+interface Task {
+  title: string;
+  date: Date;
+}
+
 export function Calendar() {
   const [date, setDate] = useState<Date | undefined>(new Date());
+  const [tasks, setTasks] = useState<Task[]>([]);
+
+  const addTask = (title: string) => {
+    if (date) {
+      setTasks([...tasks, { title, date }]);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -21,6 +33,19 @@ export function Calendar() {
               onSelect={setDate}
               className="rounded-md border"
             />
+            <div className="mt-4">
+              <input
+                type="text"
+                placeholder="Task title"
+                className="border rounded p-2 w-full"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    addTask((e.target as HTMLInputElement).value);
+                    (e.target as HTMLInputElement).value = '';
+                  }
+                }}
+              />
+            </div>
           </CardContent>
         </Card>
 
@@ -30,18 +55,14 @@ export function Calendar() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div>
-                <h3 className="font-medium">Website Redesign</h3>
-                <p className="text-sm text-muted-foreground">Due in 3 days</p>
-              </div>
-              <div>
-                <h3 className="font-medium">Team Meeting</h3>
-                <p className="text-sm text-muted-foreground">Tomorrow at 10:00 AM</p>
-              </div>
-              <div>
-                <h3 className="font-medium">Project Review</h3>
-                <p className="text-sm text-muted-foreground">Next week</p>
-              </div>
+              {tasks.map((task, index) => (
+                <div key={index}>
+                  <h3 className="font-medium">{task.title}</h3>
+                  <p className="text-sm text-muted-foreground">
+                    {task.date.toDateString()}
+                  </p>
+                </div>
+              ))}
             </div>
           </CardContent>
         </Card>
