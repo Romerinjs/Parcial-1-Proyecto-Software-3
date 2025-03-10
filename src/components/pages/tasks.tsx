@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   Table,
   TableBody,
@@ -8,31 +9,40 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Plus } from 'lucide-react';
-import { tasks } from '@/lib/data';
+import { tasks as initialTasks } from '@/lib/data';
 
 export function Tasks() {
+  const [search, setSearch] = useState('');
+  const [tasks] = useState(initialTasks);
+
   const getPriorityColor = (priority: string) => {
     switch (priority.toLowerCase()) {
       case 'high':
         return 'destructive';
       case 'medium':
-        return 'warning';
+        return 'outline';
       default:
         return 'secondary';
     }
   };
 
-  const getStatusColor = (status: string) => {
+
+  const getStatusColor = (status: string): 'default' | 'outline' | 'secondary' => {
     switch (status.toLowerCase()) {
       case 'completed':
-        return 'success';
+        return 'default';
       case 'in progress':
-        return 'warning';
+        return 'outline';
       default:
         return 'secondary';
     }
   };
+
+  const filteredTasks = tasks.filter((task) =>
+    task.title.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <div className="space-y-6">
@@ -44,6 +54,13 @@ export function Tasks() {
         </Button>
       </div>
 
+      <Input
+        placeholder="Search tasks..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        className="w-full"
+      />
+
       <Table>
         <TableHeader>
           <TableRow>
@@ -54,7 +71,7 @@ export function Tasks() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {tasks.map((task) => (
+          {filteredTasks.map((task) => (
             <TableRow key={task.id}>
               <TableCell>{task.title}</TableCell>
               <TableCell>

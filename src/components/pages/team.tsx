@@ -12,11 +12,13 @@ import { Badge } from '@/components/ui/badge';
 import { team as initialTeam } from '@/lib/data';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-const STATUS_OPTIONS = ['Active', 'Inactive', 'Pending'];
+const STATUS_OPTIONS = ['All', 'Active', 'Inactive', 'Pending'];
 
 export function Team() {
   const [team, setTeam] = useState(initialTeam);
+  const [filter, setFilter] = useState('All');
 
   const updateStatus = (id: number, newStatus: string) => {
     setTeam((prevTeam) =>
@@ -24,12 +26,27 @@ export function Team() {
         member.id === id ? { ...member, status: newStatus } : member
       )
     );
-  
   };
+
+  const filteredTeam = filter === 'All' ? team : team.filter(member => member.status === filter);
 
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold">Team</h1>
+      
+      <div className="flex justify-between items-center">
+        <p className="text-lg">Filter by status:</p>
+        <Select onValueChange={setFilter} value={filter}>
+          <SelectTrigger className="w-40">
+            <SelectValue placeholder="Select status" />
+          </SelectTrigger>
+          <SelectContent>
+            {STATUS_OPTIONS.map(status => (
+              <SelectItem key={status} value={status}>{status}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
 
       <Table>
         <TableHeader>
@@ -41,7 +58,7 @@ export function Team() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {team.map((member) => (
+          {filteredTeam.map((member) => (
             <TableRow key={member.id}>
               <TableCell className="flex items-center gap-3">
                 <Avatar>
@@ -60,7 +77,7 @@ export function Team() {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
-                    {STATUS_OPTIONS.map((status) => (
+                    {STATUS_OPTIONS.slice(1).map((status) => (
                       <DropdownMenuItem key={status} onClick={() => updateStatus(member.id, status)}>
                         {status}
                       </DropdownMenuItem>
