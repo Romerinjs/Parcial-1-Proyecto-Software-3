@@ -18,20 +18,20 @@ export function Calendar() {
   };
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Calendar</h1>
+    <div className="flex flex-col items-center space-y-6">
+      <h1 className="text-3xl font-bold text-center">Calendar</h1>
       
-      <div className="grid gap-6 md:grid-cols-[2fr,1fr]">
-        <Card>
+      <div className="grid gap-6 md:grid-cols-[2fr,1fr] w-full max-w-4xl">
+        <Card className="mx-auto">
           <CardHeader>
-            <CardTitle>Calendar</CardTitle>
+            <CardTitle className="text-center">Calendar</CardTitle>
           </CardHeader>
           <CardContent>
             <CalendarComponent
               mode="single"
               selected={date}
               onSelect={setDate}
-              className="rounded-md border"
+              className="rounded-md border mx-auto"
             />
             <div className="mt-4">
               <input
@@ -49,14 +49,14 @@ export function Calendar() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="mx-auto">
           <CardHeader>
-            <CardTitle>Upcoming Deadlines</CardTitle>
+            <CardTitle className="text-center">Upcoming Deadlines</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               {tasks.map((task, index) => (
-                <div key={index}>
+                <div key={index} className="text-center">
                   <h3 className="font-medium">{task.title}</h3>
                   <p className="text-sm text-muted-foreground">
                     {task.date.toDateString()}
