@@ -1,9 +1,32 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import { Button } from '@/components/ui/button';
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Button } from "@/components/ui/button";
 
 export function Settings() {
+  const [emailNotifications, setEmailNotifications] = useState(false);
+  const [pushNotifications, setPushNotifications] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
+
+  useEffect(() => {
+    setEmailNotifications(localStorage.getItem("emailNotifications") === "true");
+    setPushNotifications(localStorage.getItem("pushNotifications") === "true");
+    setDarkMode(localStorage.getItem("darkMode") === "true");
+  }, []);
+
+  interface HandleToggle {
+    (setting: string, setter: React.Dispatch<React.SetStateAction<boolean>>): void;
+  }
+
+  const handleToggle: HandleToggle = (setting, setter) => {
+    setter((prev) => {
+      const newValue = !prev;
+      localStorage.setItem(setting, newValue.toString());
+      return newValue;
+    });
+  };
+
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold">Settings</h1>
@@ -21,7 +44,7 @@ export function Settings() {
                   Receive email updates about your tasks
                 </p>
               </div>
-              <Switch />
+              <Switch checked={emailNotifications} onCheckedChange={() => handleToggle("emailNotifications", setEmailNotifications)} />
             </div>
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
@@ -30,7 +53,7 @@ export function Settings() {
                   Get notified about task updates in real-time
                 </p>
               </div>
-              <Switch />
+              <Switch checked={pushNotifications} onCheckedChange={() => handleToggle("pushNotifications", setPushNotifications)} />
             </div>
           </CardContent>
         </Card>
@@ -47,7 +70,7 @@ export function Settings() {
                   Toggle dark mode theme
                 </p>
               </div>
-              <Switch />
+              <Switch checked={darkMode} onCheckedChange={() => handleToggle("darkMode", setDarkMode)} />
             </div>
           </CardContent>
         </Card>
